@@ -1,0 +1,10 @@
+﻿import api from './axiosClient'
+import type { Product } from '../types'
+
+export const productsApi = {
+  getAll: () => api.get<Product[]>('/Products').then((r) => r.data),
+  getAllAdmin: () => api.get<Product[]>('/Products/admin').then((r) => r.data),
+  create: (data: FormData) => api.post<Product>('/Products', data).then((r) => r.data),
+  update: (id: number, data: FormData) => api.put<Product>(`/Products/${id}`, data).then((r) => r.data),
+  delete: (id: number) => api.delete(`/Products/${id}`),
+}
