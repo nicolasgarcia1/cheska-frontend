@@ -18,6 +18,7 @@ export default function ProductForm({ product, onClose, onSaved }: Props) {
     price: product?.price ?? 0,
     cost: product?.cost ?? 0,
     stock: product?.stock ?? 0,
+    contenido: product?.contenido ?? '',
     category: product?.category ? CATEGORIES.indexOf(product.category) : 0,
     isActive: product?.isActive ?? true,
   })
@@ -53,6 +54,7 @@ export default function ProductForm({ product, onClose, onSaved }: Props) {
             { label: 'Precio', key: 'price', type: 'number' },
             { label: 'Costo', key: 'cost', type: 'number' },
             { label: 'Stock', key: 'stock', type: 'number' },
+            { label: 'Contenido', key: 'contenido', type: 'text' },
           ] as const).map(({ label, key, type }) => (
             <div key={key}>
               <label className="block text-xs font-medium text-gray-600 mb-1">{label}</label>

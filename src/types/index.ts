@@ -6,6 +6,7 @@
   cost?: number
   profitMargin?: number
   stock: number
+  contenido?: string
   imageUrl: string
   isActive: boolean
   category: string

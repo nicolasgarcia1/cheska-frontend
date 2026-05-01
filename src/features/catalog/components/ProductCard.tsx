@@ -1,15 +1,19 @@
 ﻿import type { Product } from '../../../types'
 
 const WA_NUMBER = '5491128469228' 
-const IG_URL = 'https://www.instagram.com/cheska_arg' 
 
 export default function ProductCard({ product }: { product: Product }) {
+  const formattedPrice = new Intl.NumberFormat('es-AR', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(product.price)
+
   const waMessage = encodeURIComponent(
-    `Hola! Me interesa el producto: *${product.name}* - $${product.price}. Esta disponible?`
+    `Hola! Me interesa el producto: *${product.name}* - $${formattedPrice}. Esta disponible?`
   )
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-cheska-secondary overflow-hidden hover:shadow-md transition-shadow">
+    <div className="h-full bg-white rounded-xl sm:rounded-2xl shadow-sm border border-cheska-secondary overflow-hidden hover:shadow-md transition-shadow flex flex-col">
       <div className="aspect-square overflow-hidden bg-cheska-secondary">
         {product.imageUrl ? (
           <img
@@ -18,57 +22,59 @@ export default function ProductCard({ product }: { product: Product }) {
             className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-4xl">ðŸŒ¸</div>
+          <div className="w-full h-full flex items-center justify-center px-3 text-center text-xs text-cheska-soft">
+            Imagen no disponible.
+          </div>
         )}
       </div>
-      <div className="p-4">
-        <span className="text-xs text-cheska-accent font-medium uppercase tracking-wide">
-          {product.category}
-        </span>
-        <h3 className="font-semibold text-cheska-text mt-1 truncate">{product.name}</h3>
-        <p className="text-xs text-cheska-soft mt-1 line-clamp-2">{product.description}</p>
-        <div className="flex items-center justify-between mt-3">
-          <span className="text-xl font-bold text-cheska-text">${product.price}</span>
-          <span
-            className={`text-xs px-2 py-0.5 rounded-full ${
-              product.stock > 1
-                ? 'bg-green-100 text-green-700'
-                : product.stock > 0
-                ? 'bg-yellow-100 text-yellow-700'
-                : 'bg-red-100 text-red-700'
-            }`}
-          >
-            {product.stock > 0 ? `Stock: ${product.stock}` : 'Sin stock'}
+      <div className="p-2.5 sm:p-4 flex flex-1 flex-col">
+        <div className="flex min-w-0 items-center justify-between gap-1.5 sm:gap-2">
+          <span className="min-w-0 truncate text-[10px] sm:text-xs text-cheska-accent font-medium uppercase tracking-wide opacity-90">
+            {product.category}
           </span>
+          {product.contenido && (
+            <span className="max-w-[4.5rem] shrink-0 truncate rounded-lg border border-cheska-secondary bg-white px-1.5 py-0.5 text-[10px] font-medium text-cheska-text sm:max-w-none sm:px-2 sm:text-xs">
+              {product.contenido}
+            </span>
+          )}
         </div>
-        <div className="flex gap-2 mt-3">
-          <a
-            href={`https://wa.me/${WA_NUMBER}?text=${waMessage}`}
-            target="_blank"
-            rel="noreferrer"
-            className="flex-1 flex items-center justify-center gap-1 bg-cheska-bg border border-cheska-secondary text-cheska-text text-xs py-2 rounded-lg hover:opacity-90"
-          >
-            <img
-              src="/whatsapp-svg.svg"
-              alt="whatsapp logo"
-              aria-hidden="true"
-              className="h-4 w-4 shrink-0"
-            />
-            Pedir por WhatsApp
-          </a>
-          <a
-            href={IG_URL}
-            target="_blank"
-            rel="noreferrer"
-            className="flex items-center justify-center px-3 bg-cheska-bg border border-cheska-secondary text-white text-xs py-2 rounded-lg hover:opacity-90"
-          >
-            <img
-              src='/instagram-svg.svg'
-              alt='instagram logo'
-              aria-hidden='true'
-              className='h-4 w-4 shrink-0'
-            />
-          </a>
+        <h3 className="text-sm sm:text-base font-semibold text-cheska-text mt-1 truncate">
+          {product.name}
+        </h3>
+        <div className="mt-auto pt-2 sm:pt-3">
+          <div className="flex items-center justify-between gap-2">
+            <span className="text-base sm:text-xl font-bold text-cheska-text">
+              ${formattedPrice}
+            </span>
+            <span
+              className={`ml-auto w-fit shrink-0 text-[10px] sm:text-xs px-1.5 sm:px-2 py-0.5 rounded-full ${
+                product.stock > 1
+                  ? 'bg-green-100 text-green-700'
+                  : product.stock > 0
+                  ? 'bg-yellow-100 text-yellow-700'
+                  : 'bg-red-100 text-red-700'
+              }`}
+            >
+              {product.stock > 0 ? `Stock: ${product.stock}` : 'Sin stock'}
+            </span>
+          </div>
+          <div className="flex mt-2 sm:mt-3">
+            <a
+              href={`https://wa.me/${WA_NUMBER}?text=${waMessage}`}
+              target="_blank"
+              rel="noreferrer"
+              className="flex-1 flex min-w-0 items-center justify-center gap-1 bg-cheska-bg border border-cheska-secondary text-cheska-text text-[11px] sm:text-xs py-1.5 sm:py-2 rounded-lg hover:opacity-90"
+            >
+              <img
+                src="/whatsapp-svg.svg"
+                alt="whatsapp logo"
+                aria-hidden="true"
+                className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0"
+              />
+              <span>Pedir</span>
+              <span className="hidden sm:inline">por WhatsApp</span>
+            </a>
+          </div>
         </div>
       </div>
     </div>

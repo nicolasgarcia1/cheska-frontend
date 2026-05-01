@@ -36,7 +36,7 @@ export default function ProductsAdmin() {
         <table className="w-full text-sm">
           <thead className="bg-gray-50 border-b">
             <tr>
-              {['Imagen', 'Nombre', 'Precio', 'Costo', 'Margen', 'Stock', 'Estado', ''].map((h) => (
+              {['Imagen', 'Nombre', 'Contenido', 'Precio', 'Costo', 'Margen', 'Stock', 'Estado', ''].map((h) => (
                 <th key={h} className="px-4 py-3 text-left text-gray-500 font-medium">{h}</th>
               ))}
             </tr>
@@ -52,6 +52,9 @@ export default function ProductsAdmin() {
                   />
                 </td>
                 <td className="px-4 py-3 font-medium text-gray-800">{p.name}</td>
+                <td className="px-4 py-3 text-gray-500">
+                  <span className="block max-w-20 truncate">{p.contenido || '-'}</span>
+                </td>
                 <td className="px-4 py-3 text-green-600 font-medium">${p.price}</td>
                 <td className="px-4 py-3 text-gray-500">${p.cost}</td>
                 <td className="px-4 py-3 text-blue-600">{p.profitMargin?.toFixed(1)}%</td>
