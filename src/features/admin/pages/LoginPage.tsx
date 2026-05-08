@@ -10,6 +10,8 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false)
   const login = useAuthStore((s) => s.login)
   const navigate = useNavigate()
+  const inputClassName =
+    'w-full px-4 py-2.5 border border-gray-200 rounded-xl focus-visible:outline-none focus-visible:border-cheska-primary focus-visible:ring-2 focus-visible:ring-cheska-primary'
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -19,36 +21,36 @@ export default function LoginPage() {
       login(data.token)
       navigate('/admin')
     } catch {
-      toast.error('Credenciales invÃ¡lidas')
+      toast.error('Credenciales inválidas')
     } finally {
       setLoading(false)
     }
   }
 
   return (
-    <div className="min-h-screen bg-rose-50 flex items-center justify-center">
-      <div className="bg-white p-8 rounded-2xl shadow-md w-full max-w-sm">
-        <h1 className="text-2xl font-bold text-gray-800 mb-1">Acceso Admin</h1>
-        <p className="text-gray-500 text-sm mb-6">Panel de gestiÃ³n Cheska</p>
+    <div className="min-h-screen bg-[#FAF4F0] flex items-center justify-center">
+      <div className="bg-cheska-bg p-8 rounded-2xl shadow-md w-full max-w-sm">
+        <h1 className="text-2xl font-bold text-cheska-text mb-1">Acceso Admin</h1>
+        <p className="text-gray-500  text-sm mb-6">Panel de gestión Cheska</p>
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
             type="text"
             placeholder="Usuario"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-            className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-rose-300"
+            className={inputClassName}
           />
           <input
             type="password"
-            placeholder="ContraseÃ±a"
+            placeholder="Contraseña"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-rose-300"
+            className={inputClassName}
           />
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-rose-600 text-white py-2.5 rounded-xl font-medium hover:bg-rose-700 transition-colors disabled:opacity-60"
+            className="w-full bg-cheska-soft text-white py-2.5 rounded-xl font-medium hover:bg-cheska-primary transition-colors disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cheska-primary focus-visible:ring-offset-2"
           >
             {loading ? 'Ingresando...' : 'Ingresar'}
           </button>

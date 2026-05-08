@@ -2,8 +2,10 @@
 import type { Product } from '../../../types'
 import { productsApi } from '../../../api/productsApi'
 import { X } from 'lucide-react'
+import toast from 'react-hot-toast'
 
 const CATEGORIES = ['BodySplash', 'Crema', 'Kit', 'Otro']
+const NUMERIC_FIELDS = ['price', 'cost', 'stock']
 
 interface Props {
   product: Product | null
@@ -15,9 +17,9 @@ export default function ProductForm({ product, onClose, onSaved }: Props) {
   const [form, setForm] = useState({
     name: product?.name ?? '',
     description: product?.description ?? '',
-    price: product?.price ?? 0,
-    cost: product?.cost ?? 0,
-    stock: product?.stock ?? 0,
+    price: product ? String(product.price) : '',
+    cost: product ? String(product.cost ?? 0) : '',
+    stock: product ? String(product.stock) : '',
     contenido: product?.contenido ?? '',
     category: product?.category ? CATEGORIES.indexOf(product.category) : 0,
     isActive: product?.isActive ?? true,
@@ -30,11 +32,16 @@ export default function ProductForm({ product, onClose, onSaved }: Props) {
     setLoading(true)
     try {
       const fd = new FormData()
-      Object.entries(form).forEach(([k, v]) => fd.append(k, String(v)))
+      Object.entries(form).forEach(([k, v]) => {
+        const value = NUMERIC_FIELDS.includes(k) && v === '' ? '0' : String(v)
+        fd.append(k, value)
+      })
       if (image) fd.append('image', image)
       if (product) await productsApi.update(product.id, fd)
       else await productsApi.create(fd)
       onSaved()
+    } catch {
+      toast.error('No pudimos guardar el producto')
     } finally {
       setLoading(false)
     }
@@ -50,7 +57,7 @@ export default function ProductForm({ product, onClose, onSaved }: Props) {
         <form onSubmit={handleSubmit} className="space-y-3">
           {([
             { label: 'Nombre', key: 'name', type: 'text' },
-            { label: 'DescripciÃ³n', key: 'description', type: 'text' },
+            { label: 'Descripción', key: 'description', type: 'text' },
             { label: 'Precio', key: 'price', type: 'number' },
             { label: 'Costo', key: 'cost', type: 'number' },
             { label: 'Stock', key: 'stock', type: 'number' },
@@ -62,18 +69,18 @@ export default function ProductForm({ product, onClose, onSaved }: Props) {
                 type={type}
                 value={form[key]}
                 onChange={(e) =>
-                  setForm((f) => ({ ...f, [key]: type === 'number' ? +e.target.value : e.target.value }))
+                  setForm((f) => ({ ...f, [key]: e.target.value }))
                 }
-                className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-rose-300"
+                className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-cheska-secondary"
               />
             </div>
           ))}
           <div>
-            <label className="block text-xs font-medium text-gray-600 mb-1">CategorÃ­a</label>
+            <label className="block text-xs font-medium text-gray-600 mb-1">Categorí­a</label>
             <select
               value={form.category}
               onChange={(e) => setForm((f) => ({ ...f, category: +e.target.value }))}
-              className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-rose-300"
+              className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-cheska-secondary"
             >
               {CATEGORIES.map((c, i) => <option key={c} value={i}>{c}</option>)}
             </select>
@@ -84,7 +91,7 @@ export default function ProductForm({ product, onClose, onSaved }: Props) {
               type="file"
               accept="image/*"
               onChange={(e) => setImage(e.target.files?.[0] ?? null)}
-              className="w-full text-sm text-gray-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:bg-rose-50 file:text-rose-700"
+              className="w-full text-sm text-gray-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:bg-[#FAF4F0] file:text-cheska-text"
             />
           </div>
           {product && (
@@ -103,7 +110,7 @@ export default function ProductForm({ product, onClose, onSaved }: Props) {
               Cancelar
             </button>
             <button type="submit" disabled={loading}
-              className="flex-1 px-4 py-2 bg-rose-600 text-white rounded-xl text-sm hover:bg-rose-700 disabled:opacity-60">
+              className="flex-1 px-4 py-2 bg-cheska-accent text-white rounded-xl text-sm hover:bg-cheska-soft disabled:opacity-60">
               {loading ? 'Guardando...' : 'Guardar'}
             </button>
           </div>

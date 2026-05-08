@@ -4,10 +4,11 @@ import PublicLayout from '../layouts/PublicLayout'
 import AdminLayout from '../layouts/AdminLayout'
 import CatalogPage from '../features/catalog/pages/CatalogPage'
 import ProductDetailPage from '../features/catalog/pages/ProductDetailPage'
+import NotFoundPage from '../features/catalog/pages/NotFoundPage'
 import LoginPage from '../features/admin/pages/LoginPage'
 import ProductsAdmin from '../features/admin/pages/ProductsAdmin'
 import SalesAdmin from '../features/admin/pages/SalesAdmin'
-import DashboardPage from '../features/dashboard/pages/DashboardPage'
+import AdminDashboard from '../features/admin/pages/AdminDashboard'
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated } = useAuthStore()
@@ -21,6 +22,7 @@ export default function AppRouter() {
         <Route element={<PublicLayout />}>
           <Route path="/" element={<CatalogPage />} />
           <Route path="/products/:id" element={<ProductDetailPage />} />
+          <Route path="*" element={<NotFoundPage />} />
         </Route>
 
         <Route path="/admin/login" element={<LoginPage />} />
@@ -32,7 +34,7 @@ export default function AppRouter() {
             </ProtectedRoute>
           }
         >
-          <Route path="/admin" element={<DashboardPage />} />
+          <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/admin/products" element={<ProductsAdmin />} />
           <Route path="/admin/sales" element={<SalesAdmin />} />
         </Route>

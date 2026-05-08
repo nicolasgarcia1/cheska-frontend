@@ -5,13 +5,16 @@ const WA_NUMBER = '5491128469228'
 
 export default function ProductCard({ product }: { product: Product }) {
   const navigate = useNavigate()
+  const isOutOfStock = product.stock === 0
   const formattedPrice = new Intl.NumberFormat('es-AR', {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   }).format(product.price)
 
   const waMessage = encodeURIComponent(
-    `Hola! Me interesa el producto: *${product.name}* - $${formattedPrice}. Esta disponible?`
+    isOutOfStock
+      ? `Hola! Queria consultar si vuelve a entrar el producto: *${product.name}*.`
+      : `Hola! Me interesa el producto: *${product.name}* - $${formattedPrice}. Esta disponible?`
   )
   const goToDetail = () => navigate(`/products/${product.id}`)
 
@@ -29,16 +32,33 @@ export default function ProductCard({ product }: { product: Product }) {
       className="h-full cursor-pointer bg-white rounded-xl sm:rounded-2xl shadow-sm border border-cheska-secondary overflow-hidden hover:shadow-md transition-shadow flex flex-col focus:outline-none focus:ring-2 focus:ring-cheska-accent focus:ring-offset-2"
       aria-label={`Ver detalle de ${product.name}`}
     >
-      <div className="aspect-square overflow-hidden bg-cheska-secondary">
+      <div className="relative aspect-square overflow-hidden bg-cheska-secondary">
         {product.imageUrl ? (
           <img
             src={product.imageUrl}
             alt={product.name}
-            className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+            onError={(event) => {
+              event.currentTarget.src =
+                'https://placehold.co/600x600/E8DED2/7A6F66?text=Imagen+no+disponible'
+            }}
+            className={`w-full h-full object-cover hover:scale-105 transition-transform duration-300 ${
+              isOutOfStock ? 'brightness-50' : ''
+            }`}
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center px-3 text-center text-xs text-cheska-soft">
+          <div
+            className={`w-full h-full flex items-center justify-center px-3 text-center text-xs text-cheska-soft ${
+              isOutOfStock ? 'brightness-50' : ''
+            }`}
+          >
             Imagen no disponible.
+          </div>
+        )}
+        {isOutOfStock && (
+          <div className="absolute inset-0 flex items-center justify-center bg-black/25">
+            <span className="rounded-full bg-white/95 px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-cheska-text shadow-sm sm:text-sm">
+              Sin stock
+            </span>
           </div>
         )}
       </div>
@@ -87,8 +107,10 @@ export default function ProductCard({ product }: { product: Product }) {
                 aria-hidden="true"
                 className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0"
               />
-              <span>Pedir</span>
-              <span className="hidden sm:inline">por WhatsApp</span>
+              <span>{isOutOfStock ? 'Consultar' : 'Pedir'}</span>
+              <span className="hidden sm:inline">
+                {isOutOfStock ? 'reposición' : 'por WhatsApp'}
+              </span>
             </a>
           </div>
         </div>

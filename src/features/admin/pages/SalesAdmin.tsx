@@ -8,18 +8,31 @@ import toast from 'react-hot-toast'
 export default function SalesAdmin() {
   const [sales, setSales] = useState<Sale[]>([])
   const [showForm, setShowForm] = useState(false)
+  const [error, setError] = useState(false)
 
-  const load = () => salesApi.getAll().then(setSales)
+  const load = () =>
+    salesApi
+      .getAll()
+      .then((data) => {
+        setSales(data)
+        setError(false)
+      })
+      .catch(() => setError(true))
   useEffect(() => { load() }, [])
 
   const handleExport = async (type: 'csv' | 'excel') => {
-    const res = type === 'csv' ? await salesApi.exportCsv('sales') : await salesApi.exportExcel()
-    const url = URL.createObjectURL(new Blob([res.data as BlobPart]))
-    const a = document.createElement('a')
-    a.href = url
-    a.download = type === 'csv' ? 'ventas.csv' : 'ventas.xlsx'
-    a.click()
-    toast.success('Exportado correctamente')
+    try {
+      const res = type === 'csv' ? await salesApi.exportCsv('sales') : await salesApi.exportExcel()
+      const url = URL.createObjectURL(new Blob([res.data as BlobPart]))
+      const a = document.createElement('a')
+      a.href = url
+      a.download = type === 'csv' ? 'ventas.csv' : 'ventas.xlsx'
+      a.click()
+      URL.revokeObjectURL(url)
+      toast.success('Exportado correctamente')
+    } catch {
+      toast.error('No pudimos exportar las ventas')
+    }
   }
 
   return (
@@ -36,11 +49,17 @@ export default function SalesAdmin() {
             <Download size={14} /> Excel
           </button>
           <button onClick={() => setShowForm(true)}
-            className="flex items-center gap-2 bg-rose-600 text-white px-4 py-2 rounded-xl hover:bg-rose-700 text-sm">
+            className="flex items-center gap-2 bg-cheska-soft text-white px-4 py-2 rounded-xl hover:bg-cheska-accent text-sm">
             <Plus size={16} /> Registrar venta
           </button>
         </div>
       </div>
+
+      {error && (
+        <div className="mb-4 rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-sm text-red-700">
+          No pudimos cargar las ventas. Probá recargar la página.
+        </div>
+      )}
 
       <div className="space-y-3">
         {sales.map((sale) => (
@@ -48,18 +67,23 @@ export default function SalesAdmin() {
             <div className="flex justify-between items-start">
               <div>
                 <p className="font-medium text-gray-800">
-                  {sale.customerName || 'Cliente anÃ³nimo'} â€” {sale.channel}
+                  {sale.customerName || 'Cliente anónimo'} - {sale.channel}
                 </p>
                 <p className="text-xs text-gray-400 mt-0.5">
                   {new Date(sale.saleDate).toLocaleDateString('es-AR')}
                 </p>
                 <div className="flex flex-wrap gap-2 mt-2">
                   {sale.items.map((item, i) => (
-                    <span key={i} className="text-xs bg-rose-50 text-rose-700 px-2 py-0.5 rounded-full">
+                    <span key={i} className="text-xs bg-cheska-secondary text-cheska-text px-2 py-0.5 rounded-full">
                       {item.productName} x{item.quantity}
                     </span>
                   ))}
                 </div>
+                {sale.notes && (
+                  <p className="mt-2 max-w-xl px-3 py-2 text-sm text-gray-600">
+                    {sale.notes}
+                  </p>
+                )}
               </div>
               <div className="text-right">
                 <p className="font-bold text-gray-800">${sale.totalAmount.toFixed(2)}</p>

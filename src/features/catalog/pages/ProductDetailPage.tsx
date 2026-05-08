@@ -53,22 +53,42 @@ export default function ProductDetailPage() {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   }).format(product.price)
+  const isOutOfStock = product.stock === 0
   const waMessage = encodeURIComponent(
-    `Hola! Me interesa el producto: *${product.name}* - $${formattedPrice}. Esta disponible?`
+    isOutOfStock
+      ? `Hola! Queria consultar si vuelve a entrar el producto: *${product.name}*.`
+      : `Hola! Me interesa el producto: *${product.name}* - $${formattedPrice}. Esta disponible?`
   )
 
   return (
     <div className="grid gap-6 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] md:items-start">
-      <div className="aspect-square overflow-hidden rounded-2xl border border-cheska-secondary bg-cheska-secondary">
+      <div className="relative aspect-square overflow-hidden rounded-2xl border border-cheska-secondary bg-cheska-secondary">
         {product.imageUrl ? (
           <img
             src={product.imageUrl}
             alt={product.name}
-            className="h-full w-full object-cover"
+            onError={(event) => {
+              event.currentTarget.src =
+                'https://placehold.co/800x800/E8DED2/7A6F66?text=Imagen+no+disponible'
+            }}
+            className={`h-full w-full object-cover ${
+              isOutOfStock ? 'brightness-50' : ''
+            }`}
           />
         ) : (
-          <div className="flex h-full w-full items-center justify-center px-4 text-center text-sm text-cheska-soft">
+          <div
+            className={`flex h-full w-full items-center justify-center px-4 text-center text-sm text-cheska-soft ${
+              isOutOfStock ? 'brightness-50' : ''
+            }`}
+          >
             Imagen no disponible.
+          </div>
+        )}
+        {isOutOfStock && (
+          <div className="absolute inset-0 flex items-center justify-center bg-black/25">
+            <span className="rounded-full bg-white/95 px-5 py-2 text-sm font-semibold uppercase tracking-wide text-cheska-text shadow-sm sm:text-base">
+              Sin stock
+            </span>
           </div>
         )}
       </div>
@@ -131,7 +151,7 @@ export default function ProductDetailPage() {
             aria-hidden="true"
             className="h-5 w-5 shrink-0"
           />
-          Pedir por WhatsApp
+          {isOutOfStock ? 'Consultar reposición' : 'Pedir por WhatsApp'}
         </a>
       </section>
     </div>

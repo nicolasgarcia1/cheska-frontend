@@ -7,5 +7,9 @@ export const productsApi = {
   getAllAdmin: () => api.get<Product[]>('/Products/admin').then((r) => r.data),
   create: (data: FormData) => api.post<Product>('/Products', data).then((r) => r.data),
   update: (id: number, data: FormData) => api.put<Product>(`/Products/${id}`, data).then((r) => r.data),
+  replenishStock: (
+    id: number,
+    data: { quantity: number; cost: number; price?: number }
+  ) => api.patch<Product>(`/Products/${id}/stock/replenish`, data).then((r) => r.data),
   delete: (id: number) => api.delete(`/Products/${id}`),
 }

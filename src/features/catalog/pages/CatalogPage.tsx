@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { SlidersHorizontal, X } from 'lucide-react'
 import { useSearchParams } from 'react-router-dom'
 import { productsApi } from '../../../api/productsApi'
@@ -27,9 +27,50 @@ export default function CatalogPage() {
   const [selectedCategory, setSelectedCategory] = useState(ALL_CATEGORIES)
   const [sortOption, setSortOption] = useState<SortOption>('none')
   const [isFilterOpen, setIsFilterOpen] = useState(false)
+  const [filterDragOffset, setFilterDragOffset] = useState(0)
+  const [error, setError] = useState(false)
+  const filterTouchStartX = useRef<number | null>(null)
+
+  const closeFilters = () => {
+    setFilterDragOffset(0)
+    setIsFilterOpen(false)
+  }
+
+  const openFilters = () => {
+    setFilterDragOffset(0)
+    setIsFilterOpen(true)
+  }
+
+  const handleFilterTouchStart = (event: React.TouchEvent<HTMLElement>) => {
+    filterTouchStartX.current = event.touches[0].clientX
+  }
+
+  const handleFilterTouchMove = (event: React.TouchEvent<HTMLElement>) => {
+    if (filterTouchStartX.current === null) return
+
+    const nextOffset = event.touches[0].clientX - filterTouchStartX.current
+    setFilterDragOffset(Math.max(0, nextOffset))
+  }
+
+  const handleFilterTouchEnd = () => {
+    if (filterDragOffset > 70) {
+      closeFilters()
+    } else {
+      setFilterDragOffset(0)
+    }
+
+    filterTouchStartX.current = null
+  }
 
   useEffect(() => {
-    productsApi.getAll().then(setProducts).finally(() => setLoading(false))
+    productsApi
+      .getAll()
+      .then((data) => {
+        setProducts(data)
+        setError(false)
+      })
+      .catch(() => setError(true))
+      .finally(() => setLoading(false))
   }, [])
 
   useEffect(() => {
@@ -54,6 +95,8 @@ export default function CatalogPage() {
     })
 
     return [...filteredProducts].sort((a, b) => {
+      if (a.stock === 0 && b.stock > 0) return 1
+      if (a.stock > 0 && b.stock === 0) return -1
       if (sortOption === 'price-asc') return a.price - b.price
       if (sortOption === 'price-desc') return b.price - a.price
       if (sortOption === 'newest') return b.id - a.id
@@ -70,10 +113,16 @@ export default function CatalogPage() {
 
   return (
     <div>
+      {error && (
+        <div className="mb-6 rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-sm text-red-700">
+          No pudimos cargar los productos. Probá nuevamente más tarde.
+        </div>
+      )}
+
       <div className="mb-6 flex justify-end">
         <button
           type="button"
-          onClick={() => setIsFilterOpen(true)}
+          onClick={openFilters}
           className="inline-flex items-center gap-2 rounded-full border border-cheska-secondary bg-white px-4 py-2 text-sm font-medium text-cheska-text transition-colors hover:opacity-90"
         >
           <SlidersHorizontal size={16} aria-hidden="true" />
@@ -98,18 +147,28 @@ export default function CatalogPage() {
           </style>
           <button
             type="button"
-            onClick={() => setIsFilterOpen(false)}
+            onClick={closeFilters}
             className="absolute inset-0 bg-black/30 [animation:filter-fade-in_140ms_ease-out]"
             aria-label="Cerrar filtros"
           />
-          <aside className="absolute right-0 top-0 flex h-full w-full max-w-sm flex-col bg-white shadow-xl [animation:filter-panel-in_180ms_ease-out]">
+          <aside
+            onTouchStart={handleFilterTouchStart}
+            onTouchMove={handleFilterTouchMove}
+            onTouchEnd={handleFilterTouchEnd}
+            style={
+              filterDragOffset === 0
+                ? undefined
+                : { transform: `translateX(${filterDragOffset}px)` }
+            }
+            className="absolute right-0 top-0 flex h-full w-full max-w-sm flex-col bg-white shadow-xl [animation:filter-panel-in_180ms_ease-out]"
+          >
             <div className="flex items-center justify-between border-b border-cheska-secondary px-5 py-4">
               <h2 className="text-lg font-semibold text-cheska-text">
                 Filtrar y ordenar
               </h2>
               <button
                 type="button"
-                onClick={() => setIsFilterOpen(false)}
+                onClick={closeFilters}
                 className="flex h-9 w-9 items-center justify-center rounded-full text-cheska-text hover:bg-cheska-bg"
                 aria-label="Cerrar filtros"
               >
@@ -172,7 +231,7 @@ export default function CatalogPage() {
             <div className="border-t border-cheska-secondary p-5">
               <button
                 type="button"
-                onClick={() => setIsFilterOpen(false)}
+                onClick={closeFilters}
                 className="w-full rounded-lg bg-cheska-text px-4 py-3 text-sm font-medium text-cheska-secondary hover:opacity-90"
               >
                 Aplicar
