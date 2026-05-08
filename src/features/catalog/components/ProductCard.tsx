@@ -1,8 +1,10 @@
-﻿import type { Product } from '../../../types'
+import { useNavigate } from 'react-router-dom'
+import type { Product } from '../../../types'
 
-const WA_NUMBER = '5491128469228' 
+const WA_NUMBER = '5491128469228'
 
 export default function ProductCard({ product }: { product: Product }) {
+  const navigate = useNavigate()
   const formattedPrice = new Intl.NumberFormat('es-AR', {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
@@ -11,9 +13,22 @@ export default function ProductCard({ product }: { product: Product }) {
   const waMessage = encodeURIComponent(
     `Hola! Me interesa el producto: *${product.name}* - $${formattedPrice}. Esta disponible?`
   )
+  const goToDetail = () => navigate(`/products/${product.id}`)
 
   return (
-    <div className="h-full bg-white rounded-xl sm:rounded-2xl shadow-sm border border-cheska-secondary overflow-hidden hover:shadow-md transition-shadow flex flex-col">
+    <div
+      role="button"
+      tabIndex={0}
+      onClick={goToDetail}
+      onKeyDown={(event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault()
+          goToDetail()
+        }
+      }}
+      className="h-full cursor-pointer bg-white rounded-xl sm:rounded-2xl shadow-sm border border-cheska-secondary overflow-hidden hover:shadow-md transition-shadow flex flex-col focus:outline-none focus:ring-2 focus:ring-cheska-accent focus:ring-offset-2"
+      aria-label={`Ver detalle de ${product.name}`}
+    >
       <div className="aspect-square overflow-hidden bg-cheska-secondary">
         {product.imageUrl ? (
           <img
@@ -51,8 +66,8 @@ export default function ProductCard({ product }: { product: Product }) {
                 product.stock > 1
                   ? 'bg-green-100 text-green-700'
                   : product.stock > 0
-                  ? 'bg-yellow-100 text-yellow-700'
-                  : 'bg-red-100 text-red-700'
+                    ? 'bg-yellow-100 text-yellow-700'
+                    : 'bg-red-100 text-red-700'
               }`}
             >
               {product.stock > 0 ? `Stock: ${product.stock}` : 'Sin stock'}
@@ -63,6 +78,7 @@ export default function ProductCard({ product }: { product: Product }) {
               href={`https://wa.me/${WA_NUMBER}?text=${waMessage}`}
               target="_blank"
               rel="noreferrer"
+              onClick={(event) => event.stopPropagation()}
               className="flex-1 flex min-w-0 items-center justify-center gap-1 bg-cheska-bg border border-cheska-secondary text-cheska-text text-[11px] sm:text-xs py-1.5 sm:py-2 rounded-lg hover:opacity-90"
             >
               <img

@@ -1,5 +1,5 @@
 ﻿import { type FormEvent, useEffect, useRef, useState } from 'react'
-import { Outlet, useNavigate, useSearchParams } from 'react-router-dom'
+import { Link, Outlet, useNavigate, useSearchParams } from 'react-router-dom'
 
 const WA_NUMBER = '5491128469228'
 const IG_URL = 'https://www.instagram.com/cheska_arg'
@@ -65,11 +65,17 @@ export default function PublicLayout() {
           </p>
         </div>
         <div className="max-w-6xl mx-auto px-4 h-20 flex items-center justify-between">
-          <img
-            className="h-full w-auto shrink-0 object-contain mr-auto"
-            src="/cheska_logo_navbar.png"
-            alt="logo"
-          />
+          <Link
+            to="/"
+            className="mr-auto h-full shrink-0"
+            aria-label="Ir al inicio"
+          >
+            <img
+              className="h-full w-auto object-contain"
+              src="/cheska_logo_navbar.png"
+              alt="Cheska"
+            />
+          </Link>
           <form
             ref={searchFormRef}
             onSubmit={handleSearchSubmit}

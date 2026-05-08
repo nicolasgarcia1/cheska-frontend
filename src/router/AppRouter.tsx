@@ -3,6 +3,7 @@ import { useAuthStore } from '../store/authStore'
 import PublicLayout from '../layouts/PublicLayout'
 import AdminLayout from '../layouts/AdminLayout'
 import CatalogPage from '../features/catalog/pages/CatalogPage'
+import ProductDetailPage from '../features/catalog/pages/ProductDetailPage'
 import LoginPage from '../features/admin/pages/LoginPage'
 import ProductsAdmin from '../features/admin/pages/ProductsAdmin'
 import SalesAdmin from '../features/admin/pages/SalesAdmin'
@@ -19,6 +20,7 @@ export default function AppRouter() {
       <Routes>
         <Route element={<PublicLayout />}>
           <Route path="/" element={<CatalogPage />} />
+          <Route path="/products/:id" element={<ProductDetailPage />} />
         </Route>
 
         <Route path="/admin/login" element={<LoginPage />} />
