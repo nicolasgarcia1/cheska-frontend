@@ -39,18 +39,30 @@ export default function SaleForm({ onClose, onSaved }: Props) {
 
   const addItem = () => setItems((i) => [...i, { productId: 0, quantity: '1' }])
   const removeItem = (idx: number) => setItems((i) => i.filter((_, j) => j !== idx))
-  const updateItem = (idx: number, key: keyof SaleItemLocal, val: number | string) =>
+  const updateItem = <K extends keyof SaleItemLocal>(
+    idx: number,
+    key: K,
+    val: SaleItemLocal[K]
+  ) => {
     setItems((i) =>
       i.map((item, j) => {
         if (j !== idx) return item
 
         if (key === 'productId') {
-          return { ...item, productId: Number(val), quantity: '1' }
+          return {
+            ...item,
+            productId: Number(val),
+            quantity: '1',
+          }
         }
 
-        return { ...item, [key]: val }
+        return {
+          ...item,
+          [key]: val,
+        }
       })
     )
+  }
 
   const total = items.reduce((sum, item) => {
     const p = products.find((p) => p.id === item.productId)
@@ -125,32 +137,32 @@ export default function SaleForm({ onClose, onSaved }: Props) {
 
                   return (
                     <>
-                <select value={item.productId}
-                  onChange={(e) => updateItem(idx, 'productId', +e.target.value)}
-                  className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-cheska-secondary">
-                  <option value={0}>Seleccionar producto</option>
-                  {products.map((p) => (
-                    <option key={p.id} value={p.id} disabled={p.stock === 0}>
-                      {p.name} - ${p.price}{p.stock === 0 ? ' - Sin stock' : ''}
-                    </option>
-                  ))}
-                </select>
-                <select
-                  value={item.quantity}
-                  onChange={(e) => updateItem(idx, 'quantity', e.target.value)}
-                  disabled={!selectedProduct || availableStock === 0}
-                  className="w-20 px-2 py-2 border border-gray-200 rounded-lg text-sm text-center disabled:bg-gray-50 disabled:text-gray-400"
-                >
-                  {!selectedProduct ? (
-                    <option value="1">-</option>
-                  ) : (
-                    Array.from({ length: availableStock }, (_, i) => i + 1).map((quantity) => (
-                      <option key={quantity} value={quantity}>
-                        {quantity}
-                      </option>
-                    ))
-                  )}
-                </select>
+                      <select value={item.productId}
+                        onChange={(e) => updateItem(idx, 'productId', +e.target.value)}
+                        className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-cheska-secondary">
+                        <option value={0}>Seleccionar producto</option>
+                        {products.map((p) => (
+                          <option key={p.id} value={p.id} disabled={p.stock === 0}>
+                            {p.name} - ${p.price}{p.stock === 0 ? ' - Sin stock' : ''}
+                          </option>
+                        ))}
+                      </select>
+                      <select
+                        value={item.quantity}
+                        onChange={(e) => updateItem(idx, 'quantity', e.target.value)}
+                        disabled={!selectedProduct || availableStock === 0}
+                        className="w-20 px-2 py-2 border border-gray-200 rounded-lg text-sm text-center disabled:bg-gray-50 disabled:text-gray-400"
+                      >
+                        {!selectedProduct ? (
+                          <option value="1">-</option>
+                        ) : (
+                          Array.from({ length: availableStock }, (_, i) => i + 1).map((quantity) => (
+                            <option key={quantity} value={quantity}>
+                              {quantity}
+                            </option>
+                          ))
+                        )}
+                      </select>
                     </>
                   )
                 })()}
