@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom'
+﻿import { useNavigate } from 'react-router-dom'
 import type { Product } from '../../../types'
 
 const WA_NUMBER = '5491128469228'
@@ -80,17 +80,6 @@ export default function ProductCard({ product }: { product: Product }) {
           <div className="flex items-center justify-between gap-2">
             <span className="text-base sm:text-xl font-bold text-cheska-text">
               ${formattedPrice}
-            </span>
-            <span
-              className={`ml-auto w-fit shrink-0 text-[10px] sm:text-xs px-1.5 sm:px-2 py-0.5 rounded-full ${
-                product.stock > 1
-                  ? 'bg-green-100 text-green-700'
-                  : product.stock > 0
-                    ? 'bg-yellow-100 text-yellow-700'
-                    : 'bg-red-100 text-red-700'
-              }`}
-            >
-              {product.stock > 0 ? `Stock: ${product.stock}` : 'Sin stock'}
             </span>
           </div>
           <div className="flex mt-2 sm:mt-3">
