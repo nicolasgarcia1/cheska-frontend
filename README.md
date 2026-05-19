@@ -19,24 +19,24 @@ Muchos emprendimientos venden por WhatsApp, Instagram o de forma presencial, per
 
 ### Catalogo publico
 
-- Listado de productos activo para clientes.
-- Busqueda por nombre o categoria.
+- Listado de productos activos para clientes.
+- Busqueda por nombre o categoría.
 - Filtros por tipo de producto.
 - Ordenamiento por novedades y precio.
 - Detalle individual de producto.
-- Diseno responsive para mobile y desktop.
+- Diseño responsive para mobile y desktop.
 - Productos sin stock enviados al final del listado.
 
 ### Panel administrativo
 
 - Login protegido con JWT.
 - Dashboard con resumen del mes.
-- Metricas de ventas, ingresos, ganancia y stock bajo.
-- Grafico de ventas por mes.
+- Métricas de ventas, ingresos, ganancia y stock bajo.
+- Gráfico de ventas por mes.
 - Ranking de productos mas vendidos.
-- Gestion completa de productos: crear, editar, eliminar, activar o desactivar.
+- Gestión completa de productos: crear, editar, eliminar, activar o desactivar.
 - Carga de imagenes mediante Cloudinary.
-- Reposicion de stock.
+- Reposición de stock.
 - Registro de ventas con multiples items.
 - Descuento automatico de stock al vender.
 - Exportacion de ventas en CSV y Excel.
@@ -45,11 +45,10 @@ Muchos emprendimientos venden por WhatsApp, Instagram o de forma presencial, per
 
 ### Frontend
 
-- React 19
+- React
 - TypeScript
 - Vite
 - Tailwind CSS
-- React Router
 - Zustand
 - Axios
 - Recharts
@@ -75,8 +74,7 @@ Muchos emprendimientos venden por WhatsApp, Instagram o de forma presencial, per
 Cheska/
 |-- cheska-frontend/     Aplicacion web React
 |-- cheska-backend/      API .NET 8
-|-- DEPLOYMENT.md        Checklist de deploy
-|-- readme.txt           Presentacion del proyecto
+|-- readme.md           Presentacion del proyecto
 ```
 
 El frontend consume la API mediante una URL configurable por entorno. El backend expone endpoints publicos para el catalogo y endpoints protegidos para la administracion.
@@ -173,5 +171,5 @@ Proyecto funcional con:
 
 ## Autor
 
-Desarrollado como proyecto full stack para gestionar y potenciar la venta de productos Cheska.
+Desarrollado como proyecto full stack para gestionar y potenciar la venta de productos.
 
